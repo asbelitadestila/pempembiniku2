@@ -59,5 +59,5 @@ if (mysqli_query($koneksi, $query_update)) {
     </script>";
 }
 
-//cek commit lagi coba dari gw
+//cek commit lagi coba dari gw coba lagi
 ?>
