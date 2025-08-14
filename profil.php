@@ -70,7 +70,7 @@ $user = $stmt_user->get_result()->fetch_assoc();
 
 // --- Mengambil riwayat transaksi ---
 $history = [];
-$stmt_history = $koneksi->prepare("SELECT id, tanggal, total, status FROM transaksi WHERE id_user = ? ORDER BY tanggal DESC");
+$stmt_history = $koneksi->prepare("SELECT id, tanggal, total, status, provinsi, kota, kecamatan, kurir, no_resi FROM transaksi WHERE id_user = ? ORDER BY tanggal DESC");
 $stmt_history->bind_param("i", $user_id);
 $stmt_history->execute();
 $result_history = $stmt_history->get_result();
@@ -199,12 +199,16 @@ while ($row = $result_history->fetch_assoc()) {
                                     <p class="font-semibold mt-2">Total: Rp <?php echo number_format($order['total'], 0, ',', '.'); ?></p>
                                     <div class="flex gap-2 mt-2">
                                         <button class="text-sm text-red-500 font-semibold  detail-btn" data-id="<?php echo $order['id']; ?>">Lihat Detail</button>
-                                        <p>|</p>
-                                        <button class="text-sm text-red-500 font-semibold  detail-btn" data-id="<?php echo $order['id']; ?>">Lacak Paket</button>
+                                        <?php  ?>
+                                            <p>|</p>
+                                            <button class="text-sm text-sky-600 font-semibold lacak-btn" 
+                                                    data-resi="<?php echo $order['no_resi']; ?>" 
+                                                    data-kurir="<?php echo $order['kurir']; ?>">
+                                                Lacak Paket
+                                            </button>
+                                        <?php  ?>
                                     </div>
-                                </div>
-                                
-
+                                </div>                                
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </div>
@@ -261,6 +265,32 @@ while ($row = $result_history->fetch_assoc()) {
                 <div id="modal-loading-state" class="text-center py-16 hidden">
                     <i class="fas fa-spinner fa-spin text-4xl text-red-600"></i>
                     <p class="mt-4 text-gray-600">Memuat detail...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="lacakModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl m-4 transform transition-all duration-300 ease-out">
+            
+            <div class="flex justify-between items-start border-b px-6 py-4">
+                <div>
+                    <h5 class="text-xl font-bold text-gray-800">Riwayat Perjalanan Paket</h5>
+                    <p class="text-sm text-gray-500">
+                        <span id="lacak-kurir" class="font-semibold uppercase"></span> - 
+                        <span id="lacak-resi"></span>
+                    </p>
+                </div>
+                <button type="button" class="text-gray-400 hover:text-red-600 text-3xl font-light" onclick="document.getElementById('lacakModal').classList.add('hidden')">&times;</button>
+            </div>
+            
+            <div id="lacakModalBody" class="p-6 max-h-[70vh] overflow-y-auto">
+                <div id="lacak-content-container"></div>
+                
+                <div id="lacak-loading-state" class="text-center py-16 hidden">
+                    <i class="fas fa-truck-fast fa-beat-fade text-4xl text-red-600"></i>
+                    <p class="mt-4 text-gray-600">Melacak paket Anda...</p>
                 </div>
             </div>
         </div>
@@ -360,6 +390,76 @@ while ($row = $result_history->fetch_assoc()) {
                         // Tampilkan error di dalam modal
                         modalLoading.hide();
                         $('#modalBody').html('<div class="p-8 text-center"><p class="text-red-500 font-bold">Terjadi Kesalahan</p><p>Gagal memuat detail pesanan. Silakan coba lagi.</p></div>');
+                    }
+                });
+            });
+
+            $(document).on('click', '.lacak-btn', function() {
+                // Ambil data dari atribut data-*
+                var resi = $(this).data('resi');
+                var kurir = $(this).data('kurir');
+
+                // Referensi elemen modal menggunakan jQuery
+                var modal = $('#lacakModal');
+                var modalContent = $('#lacak-content-container');
+                var modalLoading = $('#lacak-loading-state');
+
+                // 1. Tampilkan modal dan state loading
+                modal.removeClass('hidden');
+                modalContent.empty(); // Kosongkan konten lama
+                modalLoading.show();
+
+                // Isi header modal
+                $('#lacak-kurir').text(kurir);
+                $('#lacak-resi').text(resi);
+
+                // 2. Lakukan panggilan AJAX menggunakan $.ajax
+                $.ajax({
+                    url: `lacak_paket.php?kurir=${kurir}&resi=${resi}`,
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        modalLoading.hide();
+
+                        if (data.status !== 200) {
+                            modalContent.html(`<p class="text-center text-red-500">${data.message}</p>`);
+                            return;
+                        }
+
+                        // 3. Bangun HTML dari data yang diterima
+                        var summary = data.data.summary;
+                        var history = data.data.history;
+                        var timelineHTML = `
+                            <div class="bg-red-50 border border-red-200 p-4 rounded-lg mb-6">
+                                <p class="font-semibold text-gray-600">Status Terkini</p>
+                                <p class="font-bold text-xl text-red-700">${summary.status}</p>
+                                <p class="text-sm text-gray-500 mt-1">${summary.date}</p>
+                            </div>
+                            
+                            <div class="relative border-l-2 border-dashed border-red-300 ml-4 pl-8 space-y-8">
+                        `;
+
+                        $.each(history, function(index, item) {
+                            var isLast = index === 0; // Item pertama di array adalah yang terbaru
+                            
+                            timelineHTML += `
+                                <div class="relative">
+                                    <div class="absolute -left-[42px] top-1.5 flex items-center justify-center w-6 h-6 rounded-full ${isLast ? 'bg-red-600' : 'bg-gray-300'}">
+                                        <i class="fas ${isLast ? 'fa-box-open' : 'fa-circle'} text-white text-xs"></i>
+                                    </div>
+                                    <p class="font-semibold ${isLast ? 'text-gray-800' : 'text-gray-600'}">${item.desc}</p>
+                                    <p class="text-sm text-gray-400">${item.date}</p>
+                                </div>
+                            `;
+                        });
+
+                        timelineHTML += `</div>`; // Penutup div timeline
+                        modalContent.html(timelineHTML);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.error('Error fetching tracking data:', textStatus, errorThrown);
+                        modalLoading.hide();
+                        modalContent.html(`<p class="text-center text-red-500">Gagal terhubung ke server pelacakan.</p>`);
                     }
                 });
             });

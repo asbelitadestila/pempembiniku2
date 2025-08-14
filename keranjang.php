@@ -252,9 +252,13 @@ foreach ($items as $item) {
                                 </select>
                             </div>
                             <div>
+                                <label for="alamat" class="block text-sm font-medium text-gray-700">Alamat Detail</label>
+                                <textarea class="w-full border border-gray-300 rounded-md bg-white p-2 shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" name="alamat" id="alamat" required></textarea>
+                            </div>
+                            <div>
                                 <label for="kurir" class="block text-sm font-medium text-gray-700">Kurir</label>
                                 <select id="kurir" name="kurir" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" disabled>
-                                    <option>Pilih kota dulu</option>
+                                    <option>Pilih Kecamatan dulu</option>
                                     <option value="jne">JNE</option>
                                     <option value="tiki">TIKI</option>
                                     <option value="pos">POS Indonesia</option>
@@ -442,32 +446,50 @@ foreach ($items as $item) {
                     if (data.snapToken) {
                         // Jika token berhasil didapat, buka popup pembayaran Midtrans
                         snap.pay(data.snapToken, {
-                            onSuccess: function(result){
-                                // alert("Pembayaran berhasil!");
-                                // window.location.href = 'status_pesanan.php?order_id=' + result.order_id;
-
+                            onSuccess: function(result) {
                                 /* Logika baru: kirim hasil ke server untuk diproses */
                                 console.log('Pembayaran Berhasil:', result);
                                 
-                                // Tampilkan status loading pada tombol
                                 payButton.disabled = true;
                                 payButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses Pesanan...';
 
+                                // --- PERUBAHAN DIMULAI DI SINI ---
+
+                                // 1. Ambil semua elemen form yang dibutuhkan
+                                const elProvinsi = document.getElementById('provinsi');
+                                const elKota = document.getElementById('kota');
+                                const elKecamatan = document.getElementById('kecamatan');
+                                const elAlamat = document.getElementById('alamat');
+                                const elKurir = document.getElementById('kurir');
+                                const elOngkir = document.querySelector('input[name="shipping_option"]:checked');
+
+                                // 2. Ambil TEXT dari opsi yang dipilih dan VALUE dari input lainnya
+                                const dataAlamat = {
+                                    provinsi: elProvinsi.options[elProvinsi.selectedIndex].value,
+                                    kota: elKota.options[elKota.selectedIndex].value,
+                                    kecamatan: elKecamatan.options[elKecamatan.selectedIndex].value,
+                                    detail: elAlamat.value,
+                                    kurir: elKurir.value,
+                                    ongkir: elOngkir ? elOngkir.value : 0
+                                };
+
+                                // 3. Kirim semua data (Midtrans + Alamat) ke server
                                 fetch('proses_pesanan.php', {
                                         method: 'POST',
                                         headers: {
                                             'Content-Type': 'application/json',
                                         },
-                                        body: JSON.stringify({ midtrans_result: result })
+                                        body: JSON.stringify({ 
+                                            midtrans_result: result,
+                                            shipping_details: dataAlamat // Kirim data alamat dalam satu objek
+                                        })
                                     })
                                     .then(response => response.json())
                                     .then(dataServer => {
                                         if (dataServer.success) {
-                                            // Jika server berhasil memproses, baru redirect
                                             alert("Pesanan berhasil dibuat!");
                                             window.location.href = 'status_pesanan.php?order_id=' + dataServer.order_id;
                                         } else {
-                                            // Jika server gagal, beri tahu pengguna
                                             alert('Pembayaran berhasil, namun gagal mencatat pesanan. Hubungi admin. Error: ' + dataServer.message);
                                         }
                                     })
@@ -475,6 +497,8 @@ foreach ($items as $item) {
                                         console.error('Error:', error);
                                         alert('Terjadi kesalahan koneksi saat mencatat pesanan. Hubungi admin.');
                                     });
+                                
+                                // --- AKHIR PERUBAHAN ---
                             },
                             onPending: function(result){
                                 alert("Menunggu pembayaran Anda!");

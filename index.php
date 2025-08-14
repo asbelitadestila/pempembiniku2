@@ -432,7 +432,7 @@ if (isset($_POST['beli'])) {
                 ?>
                 <div class="group">
                     <div class="relative">
-                        <img src="assets/foto_produk/<?php echo htmlspecialchars($value['foto_produk']); ?>"
+                        <img src="assets/foto/<?php echo htmlspecialchars($value['foto_produk']); ?>"
                             class="w-full h-64 object-cover rounded-lg shadow-md"
                             alt="<?php echo htmlspecialchars($value['nama_produk']); ?>">
                         <div
