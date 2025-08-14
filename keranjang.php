@@ -9,7 +9,7 @@ session_start();
 
 include("koneksi/koneksi.php");
 
-// $user_id = $_SESSION['id_admin'];
+$user_id = $_SESSION['id_admin'];
 
 // --- PENINGKATAN KEAMANAN: MENGGUNAKAN PREPARED STATEMENTS ---
 
@@ -200,59 +200,89 @@ if (!empty($items)) {
             <!-- <h1 class="text-3xl font-bold text-gray-800 mb-8">Keranjang Belanja Anda</h1> -->
 
             <?php if (empty($items)): ?>
-                <div class="text-center mt-[6%] py-40 bg-white rounded-lg shadow-md">
-                    <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
-                    <h2 class="text-2xl font-semibold text-gray-700">Keranjang Anda kosong</h2>
-                    <p class="text-gray-500 mt-2">Ayo, temukan pempek favoritmu!</p>
-                    <a href="index.php#produk" class="mt-6 inline-block bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition-colors">Mulai Belanja</a>
-                </div>
+            <div class="text-center mt-[6%] py-40 bg-white rounded-lg shadow-md">
+                <i class="fas fa-shopping-cart text-6xl text-gray-300 mb-4"></i>
+                <h2 class="text-2xl font-semibold text-gray-700">Keranjang Anda kosong</h2>
+                <p class="text-gray-500 mt-2">Ayo, temukan pempek favoritmu!</p>
+                <a href="index.php#produk" class="mt-6 inline-block bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition-colors">Mulai Belanja</a>
+            </div>
             <?php else: ?>
-                <div class="flex flex-col lg:flex-row gap-8">
-                    <!-- Daftar Item Keranjang -->
-                    <div id="cart-items-container" class="w-full lg:w-2/3 space-y-4">
-                        <?php foreach ($items as $item): ?>
-                            <div id="item-<?php echo $item['id_produk']; ?>" class="flex items-center bg-white p-4 rounded-lg shadow-sm transition-all duration-300">
-                                <img src="assets/foto_produk/<?php echo htmlspecialchars($item['foto']); ?>" alt="<?php echo htmlspecialchars($item['nama']); ?>" class="w-20 h-20 object-cover rounded-md">
-                                <div class="flex-grow ml-4">
-                                    <h3 class="font-bold text-lg text-gray-800"><?php echo htmlspecialchars($item['nama']); ?></h3>
-                                    <p class="text-sm text-red-600 font-semibold">Rp <span class="item-price"><?php echo number_format($item['harga'], 0, ',', '.'); ?></span></p>
-                                </div>
-                                <div class="flex items-center space-x-3">
-                                    <input type="number" value="<?php echo $item['jumlah']; ?>" min="1" data-id="<?php echo $item['id_produk']; ?>" class="quantity-input w-16 text-center border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500">
-                                    <p class="font-bold w-28 text-right">Rp <span class="item-total-price"><?php echo number_format($item['harga'] * $item['jumlah'], 0, ',', '.'); ?></span></p>
-                                </div>
-                                <button class="ml-4 text-gray-400 hover:text-red-600 transition-colors remove-item-btn" data-id="<?php echo $item['id_produk']; ?>">
-                                    <i class="fas fa-trash-alt fa-lg"></i>
-                                </button>
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Daftar Item Keranjang -->
+                <div id="cart-items-container" class="w-full lg:w-2/3 space-y-4">
+                    <?php foreach ($items as $item): ?>
+                        <div id="item-<?php echo $item['id_produk']; ?>" class="flex items-center bg-white p-4 rounded-lg shadow-sm transition-all duration-300">
+                            <img src="assets/foto/<?php echo htmlspecialchars($item['foto']); ?>" alt="<?php echo htmlspecialchars($item['nama']); ?>" class="w-20 h-20 object-cover rounded-md">
+                            <div class="flex-grow ml-4">
+                                <h3 class="font-bold text-lg text-gray-800"><?php echo htmlspecialchars($item['nama']); ?></h3>
+                                <p class="text-sm text-red-600 font-semibold">Rp <span class="item-price"><?php echo number_format($item['harga'], 0, ',', '.'); ?></span></p>
                             </div>
-                        <?php endforeach; ?>
+                            <div class="flex items-center space-x-3">
+                                <input type="number" value="<?php echo $item['jumlah']; ?>" min="1" data-id="<?php echo $item['id_produk']; ?>" class="quantity-input w-16 text-center border border-gray-300 rounded-md focus:ring-2 focus:ring-red-500">
+                                <p class="font-bold w-28 text-right">Rp <span class="item-total-price"><?php echo number_format($item['harga'] * $item['jumlah'], 0, ',', '.'); ?></span></p>
+                            </div>
+                            <button class="ml-4 text-gray-400 hover:text-red-600 transition-colors remove-item-btn" data-id="<?php echo $item['id_produk']; ?>">
+                                <i class="fas fa-trash-alt fa-lg"></i>
+                            </button>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+
+                <!-- Ringkasan Pesanan -->
+                <div class="w-full lg:w-1/3">
+                    <div class="bg-white p-6 rounded-lg shadow-sm mb-6">
+                        <h2 class="text-xl font-bold border-b pb-4 mb-4">Pilih Pengiriman</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="provinsi" class="block text-sm font-medium text-gray-700">Provinsi</label>
+                                <select id="provinsi" name="provinsi" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm">
+                                    <option>Memuat provinsi...</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="kota" class="block text-sm font-medium text-gray-700">Kota/Kabupaten</label>
+                                <select id="kota" name="kota" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" disabled>
+                                    <option>Pilih provinsi dulu</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="kecamatan" class="block text-sm font-medium text-gray-700">kecamatan</label>
+                                <select id="kecamatan" name="kota" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" disabled>
+                                    <option>Pilih Kota dulu</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="kurir" class="block text-sm font-medium text-gray-700">Kurir</label>
+                                <select id="kurir" name="kurir" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-red-500 focus:border-red-500 sm:text-sm" disabled>
+                                    <option>Pilih kota dulu</option>
+                                    <option value="jne">JNE</option>
+                                    <option value="tiki">TIKI</option>
+                                    <option value="pos">POS Indonesia</option>
+                                </select>
+                            </div>
+                            <div id="hasil-ongkir" class="space-y-2 mt-4"></div>
+                        </div>
                     </div>
 
-                    <!-- Ringkasan Pesanan -->
-                    <div class="w-full lg:w-1/3">
-                        <div class="bg-white p-6 rounded-lg shadow-sm lg:sticky lg:top-24">
-                            <h2 class="text-xl font-bold border-b pb-4 mb-4">Ringkasan Pesanan</h2>
-                            <div class="space-y-2">
-                                <div class="flex justify-between">
-                                    <p class="text-gray-600">Subtotal</p>
-                                    <p class="font-semibold">Rp <span id="subtotal-amount"><?php echo number_format($total_amount, 0, ',', '.'); ?></span></p>
-                                </div>
-                                <div class="flex justify-between">
-                                    <p class="text-gray-600">Biaya Pengiriman</p>
-                                    <p class="font-semibold">Akan dihitung</p>
-                                </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm lg:sticky lg:top-24">                            
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <p class="text-gray-600">Subtotal</p>
+                                <p class="font-semibold">Rp <span id="subtotal-amount"><?php echo number_format($total_amount, 0, ',', '.'); ?></span></p>
                             </div>
-                            <div class="flex justify-between font-bold text-lg border-t pt-4 mt-4">
-                                <p>Total</p>
-                                <p>Rp <span id="total-amount"><?php echo number_format($total_amount, 0, ',', '.'); ?></span></p>
+                            <div class="flex justify-between">
+                                <p class="text-gray-600">Biaya Pengiriman</p>
+                                <p class="font-semibold">Rp <span id="shipping-cost">0</span></p>
                             </div>
-                            <button id="pay-button" class="w-full bg-red-600 text-white font-bold py-3 rounded-lg mt-6 hover:bg-red-700 transition-colors">
-                                Lanjut ke Pembayaran
-                            </button>
+                        </div>
+                        <div class="flex justify-between font-bold text-lg border-t pt-4 mt-4">
+                            <p>Total</p>
+                            <p>Rp <span id="grand-total-amount"><?php echo number_format($total_amount, 0, ',', '.'); ?></span></p>
                         </div>
                     </div>
                 </div>
-            <?php endif; ?>
+        <?php endif; ?>
+            </div>
         </div>
     </main>
 
@@ -407,6 +437,152 @@ if (!empty($items)) {
                 }
             });
         }
+
+        // Di dalam: document.addEventListener('DOMContentLoaded', function() { ...
+
+    // --- LOGIKA RAJAONGKIR DAN ONGKIR ---
+
+    const selectProvinsi = document.getElementById('provinsi');
+    const selectKota = document.getElementById('kota');
+    const selectKecamatan = document.getElementById('kecamatan');
+    const selectKurir = document.getElementById('kurir');
+    const hasilOngkirContainer = document.getElementById('hasil-ongkir');
+    
+    const subtotalEl = document.getElementById('subtotal-amount');
+    const shippingCostEl = document.getElementById('shipping-cost');
+    const grandTotalEl = document.getElementById('grand-total-amount');
+
+    let subtotal = parseFloat(subtotalEl.textContent.replace(/\./g, ''));
+
+    // 1. Muat Provinsi saat halaman dibuka
+    fetch('api_rajaongkir.php?action=get_provinsi')
+        .then(response => response.json())
+        .then(data => {
+            const provinces = data.data;
+            selectProvinsi.innerHTML = '<option value="">Pilih Provinsi</option>';
+            provinces.forEach(prov => {
+                selectProvinsi.innerHTML += `<option value="${prov.id}">${prov.name}</option>`;
+            });
+        })
+        .catch(error => console.error('Error fetching provinces:', error));
+
+    // 2. Saat Provinsi dipilih, muat Kota
+    selectProvinsi.addEventListener('change', function() {
+        const provinceId = this.value;
+        selectKota.innerHTML = '<option>Memuat kota...</option>';
+        // selectKota.disabled = true;
+        // selectKurir.disabled = true;
+        // hasilOngkirContainer.innerHTML = '';
+        // updateTotal(0); // Reset ongkir
+
+        if (provinceId) {
+            fetch(`api_rajaongkir.php?action=get_kota&province_id=${provinceId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const cities = data.data;
+                    selectKota.innerHTML = '<option value="">Pilih Kota/Kabupaten</option>';
+                    cities.forEach(city => {
+                        selectKota.innerHTML += `<option value="${city.id}"> ${city.name}</option>`;
+                    });
+                    selectKota.disabled = false;
+                });
+        }
+    });
+
+    selectKota.addEventListener('change', function() {
+        const cityId = this.value;
+        selectKecamatan.innerHTML = '<option>Memuat Kecamatan...</option>';
+        selectKecamatan.disabled = true;
+        selectKurir.disabled = true;
+        hasilOngkirContainer.innerHTML = '';
+        updateTotal(0); // Reset ongkir
+
+        if (cityId) {
+            fetch(`api_rajaongkir.php?action=get_kecamatan&city_id=${cityId}`)
+                .then(response => response.json())
+                .then(data => {
+                    const districs = data.data;
+                    selectKecamatan.innerHTML = '<option value="">Pilih Kecamatan</option>';
+                    districs.forEach(distric => {
+                        selectKecamatan.innerHTML += `<option value="${distric.id}"> ${distric.name}</option>`;
+                    });
+                    selectKecamatan.disabled = false;
+                });
+        }
+    });
+
+    // 3. Saat Kota dipilih, aktifkan pilihan Kurir
+    selectKecamatan.addEventListener('change', function() {
+        selectKurir.disabled = !this.value;
+        hasilOngkirContainer.innerHTML = '';
+        updateTotal(0); // Reset ongkir
+    });
+
+    // 4. Saat Kurir dipilih, cek biaya ongkir
+    selectKurir.addEventListener('change', function() {
+        const destinationId = selectKecamatan.value;
+        const courier = this.value;
+        
+        if (destinationId && courier) {
+            hasilOngkirContainer.innerHTML = '<p class="text-gray-500">Mengecek biaya...</p>';
+            
+            const formData = new FormData();
+            formData.append('destination_id', destinationId);
+            formData.append('courier', courier);
+
+            fetch('api_rajaongkir.php?action=cek_biaya', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                hasilOngkirContainer.innerHTML = ''; // Kosongkan container                
+
+                if (data.data) {
+                    console.log(data);
+                    const services = data.data;
+                    services.forEach(service => {
+                        const cost = service.cost;
+                        const etd = service.etd;
+                        const radioId = `ongkir-${courier}-${service.service.replace(/\s+/g, '')}`;
+                        
+                        hasilOngkirContainer.innerHTML += `
+                            <label for="${radioId}" class="flex items-center justify-between p-3 border rounded-md cursor-pointer hover:bg-gray-50">
+                                <div>
+                                    <p class="font-semibold">${service.service} (${service.description})</p>
+                                    <p class="text-sm text-gray-500">Estimasi ${etd} hari</p>
+                                </div>
+                                <div class="flex items-center">
+                                    <p class="font-bold mr-4">Rp ${formatRupiah(cost)}</p>
+                                    <input type="radio" id="${radioId}" name="shipping_option" value="${cost}" class="form-radio h-5 w-5 text-red-600">
+                                </div>
+                            </label>
+                        `;
+                    });
+
+                    // Tambahkan event listener untuk radio button yang baru dibuat
+                    document.querySelectorAll('input[name="shipping_option"]').forEach(radio => {
+                        radio.addEventListener('change', function() {
+                            updateTotal(parseInt(this.value));
+                        });
+                    });
+
+                } else {
+                    hasilOngkirContainer.innerHTML = '<p class="text-red-500">Layanan tidak tersedia untuk tujuan ini.</p>';
+                }
+            })
+            .catch(error => console.error('Error checking cost:', error));
+        }
+    });
+
+    // 5. Fungsi untuk update total
+    function updateTotal(shippingCost) {
+        shippingCostEl.textContent = formatRupiah(shippingCost);
+        const newGrandTotal = subtotal + shippingCost;
+        grandTotalEl.textContent = formatRupiah(newGrandTotal);
+    }
+    
+
 
     });
     </script>
