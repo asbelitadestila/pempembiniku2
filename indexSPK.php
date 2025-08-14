@@ -388,7 +388,7 @@ if (isset($_POST['beli'])) {
                                 
                                 <div class="flex items-center justify-center mb-4">
                                     <button type="button" class="quantity-btn decrease-btn">-</button>
-                                    <input class="" type="number" name="jumlah" value="1" min="1" max="<?php echo $value['stok_produk']; ?>" class="quantity-input">
+                                    <input class="border" type="number" name="jumlah" value="1" min="1" max="<?php echo $value['stok_produk']; ?>" class="quantity-input">
                                     <button type="button" class="quantity-btn increase-btn">+</button>
                                 </div>
                                 <button type="submit" name="beli" class="w-full bg-red-600 text-white py-2.5 px-4 rounded-lg font-semibold hover:bg-red-700 transition-all-smooth">
