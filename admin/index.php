@@ -25,6 +25,8 @@ if ($halaman == 'logout') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Pempek Biniku</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@400;500;600;700&display=swap');
@@ -50,7 +52,7 @@ if ($halaman == 'logout') {
                     <i class="fas fa-tachometer-alt w-6 mr-3"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="index.php?halaman=kategori" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'kategori' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
+                <a href="index.php?halaman=kategori" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'kategori' || $halaman == 'detail_kategori' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
                     <i class="fas fa-tags w-6 mr-3"></i>
                     <span>Kategori</span>
                 </a>
@@ -58,7 +60,7 @@ if ($halaman == 'logout') {
                     <i class="fas fa-box-open w-6 mr-3"></i>
                     <span>Produk</span>
                 </a>
-                <a href="index.php?halaman=transaksi" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'transaksi' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
+                <a href="index.php?halaman=transaksi" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'transaksi' || $halaman == 'detail_pembelian' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
                     <i class="fas fa-receipt w-6 mr-3"></i>
                     <span>Transaksi</span>
                 </a>
@@ -89,9 +91,47 @@ if ($halaman == 'logout') {
                 case 'transaksi':
                     include 'transaksi.php';
                     break;
-                case 'pelanggan':
-                    // Menggunakan kode dari halaman pelanggan yang sudah dimodernisasi
+                case 'pelanggan':                    
                     include 'pelanggan.php';
+                    break;
+                case 'detail_pembelian':                    
+                    include 'Detail/detail_pembelian.php';
+                    break;
+                case 'detail_pendapatan':                    
+                    include 'Detail/detail_pendapatan.php';
+                    break;
+                case 'detail_produk':                    
+                    include 'Detail/detail_produk.php';
+                    break;
+                case 'edit_kategori':                    
+                    include 'Edit/edit_kategori.php';
+                    break;
+                case 'edit_produk':                    
+                    include 'Edit/edit_produk.php';
+                    break;
+                case 'edit_transaksi':                    
+                    include 'Edit/edit_transaksi.php';
+                    break;
+                case 'hapus_foto':                    
+                    include 'Hapus/hapus_foto.php';
+                    break;
+                case 'hapus_kategori':                    
+                    include 'Hapus/hapus_kategori.php';
+                    break;
+                case 'hapus_pendapatan':                    
+                    include 'Hapus/hapus_pendapatan.php';
+                    break;
+                case 'hapus_produk':                    
+                    include 'Hapus/hapus_produk.php';
+                    break;
+                case 'hapus_user':                    
+                    include 'Hapus/hapus_user.php';
+                    break;
+                case 'tambah_kategori':                    
+                    include 'Tambah/tambah_kategori.php';
+                    break;
+                case 'tambah_produk':                    
+                    include 'Tambah/tambah_produk.php';
                     break;
                 case 'dashboard':
                 default:

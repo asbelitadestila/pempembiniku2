@@ -38,7 +38,7 @@ while ($pecah = $ambil->fetch_assoc()) {
                         <td class="p-2 border border-gray-300">Rp. <?php echo number_format($value['harga_produk']); ?> </td>
                         <td class="p-2 border border-gray-300"><?php echo number_format($value['stok_produk']); ?></td>
                         <td class="p-2 text-center border border-gray-300">
-                            <img class="w-36 inline-block" src="../assets/foto_produk/<?php echo $value['foto_produk']; ?>">
+                            <img class="w-36 inline-block" src="../assets/foto/<?php echo $value['foto_produk']; ?>">
                         </td>
                         <td class="p-2 text-center border border-gray-300 w-36">
                             <a href="index.php?halaman=detail_produk&id=<?php echo $value['id_produk']; ?>"

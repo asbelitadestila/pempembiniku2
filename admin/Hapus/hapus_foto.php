@@ -12,5 +12,5 @@ unlink("../assets/foto_produk/" .$nama_foto);
 $koneksi->query("DELETE FROM produk_foto WHERE id_produk_foto='$id_foto'");
 
 echo "<script>alert('foto produk berhasil dihapus');</script>";
-echo "<script>location='index.php?halaman=detail+produk&id=$id_produk';</script>";
+echo "<script>location='index.php?halaman=detail_produk&id=$id_produk';</script>";
 ?>
