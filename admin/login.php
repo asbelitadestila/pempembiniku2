@@ -167,7 +167,7 @@ if (isset($_POST['login'])) {
                 </form>
 
                 <div class="text-center mt-6">
-                    <a href="#" class="text-sm text-red-600 hover:text-red-500">
+                    <a href="../forgot_password.php" class="text-sm text-red-600 hover:text-red-500">
                         Lupa password?
                     </a>
                 </div>

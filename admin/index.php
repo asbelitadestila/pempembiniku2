@@ -52,15 +52,15 @@ if ($halaman == 'logout') {
                     <i class="fas fa-tachometer-alt w-6 mr-3"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="index.php?halaman=kategori" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'kategori' || $halaman == 'detail_kategori' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
+                <a href="index.php?halaman=kategori" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'kategori' || $halaman == 'detail_kategori' || $halaman == 'tambah_kategori' ?  'bg-red-900' : 'hover:bg-red-600'; ?>">
                     <i class="fas fa-tags w-6 mr-3"></i>
                     <span>Kategori</span>
                 </a>
-                <a href="index.php?halaman=produk" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'produk' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
+                <a href="index.php?halaman=produk" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'produk' || $halaman == 'detail_produk' || $halaman == 'edit_produk' || $halaman == 'tambah_produk' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
                     <i class="fas fa-box-open w-6 mr-3"></i>
                     <span>Produk</span>
                 </a>
-                <a href="index.php?halaman=transaksi" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'transaksi' || $halaman == 'detail_pembelian' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
+                <a href="index.php?halaman=transaksi" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'transaksi' || $halaman == 'detail_pembelian' || $halaman == 'edit_transaksi' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
                     <i class="fas fa-receipt w-6 mr-3"></i>
                     <span>Transaksi</span>
                 </a>
