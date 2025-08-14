@@ -142,16 +142,6 @@ if (isset($_POST['beli'])) {
                 <div class="relative">
                     <button id="btn-user" class="focus:outline-none"><i class="fas fa-user text-white text-xl"></i></button>
                     <div class="relative inline-block text-left">
-        <!-- The button that toggles the dropdown -->
-        <button id="user-menu-button" type="button" class="inline-flex justify-center w-full rounded-full border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
-            <i class="fas fa-user-circle text-xl"></i>
-        </button>
-
-        <!-- 
-            The Modern Dropdown Menu.
-            - `hidden` is used to hide it initially.
-            - JavaScript will toggle this class.
-        -->
         <div id="user-dropdown" 
              class="hidden origin-top-right absolute right-0 mt-2 w-64 rounded-lg shadow-xl bg-white ring-1 ring-black ring-opacity-5 focus:outline-none transition ease-out duration-100 transform opacity-0 scale-95" 
              role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button">

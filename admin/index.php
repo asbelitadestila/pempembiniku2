@@ -99,6 +99,7 @@ if ($halaman == 'logout') {
                     break;
             }
             ?>
+            
             <!-- Footer -->
                 <footer class="bg-red-700 text-white text-center p-4 mt-4">
                     <p class="text-sm">&copy; <?php echo date("Y"); ?> Pempek Biniku. All rights reserved.</p>  
