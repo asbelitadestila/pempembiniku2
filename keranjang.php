@@ -65,50 +65,50 @@ foreach ($items as $item) {
     $total_amount += $item['harga'] * $item['jumlah'];
 }
 
-// Konfigurasi Midtrans
-require './vendor/autoload.php';
+// // Konfigurasi Midtrans
+// require './vendor/autoload.php';
 
-\Midtrans\Config::$serverKey = 'SB-Mid-server-C1ta5HP9_KFpsSrBQaSJP3zC'; // Ganti dengan Server Key Anda
-\Midtrans\Config::$isProduction = false; // Set true untuk production
-\Midtrans\Config::$isSanitized = true;
-\Midtrans\Config::$is3ds = true;
+// \Midtrans\Config::$serverKey = 'SB-Mid-server-C1ta5HP9_KFpsSrBQaSJP3zC'; // Ganti dengan Server Key Anda
+// \Midtrans\Config::$isProduction = false; // Set true untuk production
+// \Midtrans\Config::$isSanitized = true;
+// \Midtrans\Config::$is3ds = true;
 
-$snapToken = '';
-if (!empty($items)) {
-    $transaction_details = [
-        'order_id' => 'PEMPEK-' . time(), // Order ID unik
-        'gross_amount' => $total_amount,
-    ];
+// $snapToken = '';
+// if (!empty($items)) {
+//     $transaction_details = [
+//         'order_id' => 'PEMPEK-' . time(), // Order ID unik
+//         'gross_amount' => $total_amount,
+//     ];
 
-    $item_details = [];
-    foreach ($items as $item) {
-        $item_details[] = [
-            'id' => $item['id_produk'],
-            'price' => $item['harga'],
-            'quantity' => $item['jumlah'],
-            'name' => $item['nama'],
-        ];
-    }
+//     $item_details = [];
+//     foreach ($items as $item) {
+//         $item_details[] = [
+//             'id' => $item['id_produk'],
+//             'price' => $item['harga'],
+//             'quantity' => $item['jumlah'],
+//             'name' => $item['nama'],
+//         ];
+//     }
     
-    $customer_details = [
-        'first_name' => $_SESSION['username'],
-        'phone' => $_SESSION['noHp'],
-        'address' => $_SESSION['alamat']
-    ];
+//     $customer_details = [
+//         'first_name' => $_SESSION['username'],
+//         'phone' => $_SESSION['noHp'],
+//         'address' => $_SESSION['alamat']
+//     ];
 
-    $transaction = [
-        'transaction_details' => $transaction_details,
-        'item_details' => $item_details,
-        'customer_details' => $customer_details
-    ];
+//     $transaction = [
+//         'transaction_details' => $transaction_details,
+//         'item_details' => $item_details,
+//         'customer_details' => $customer_details
+//     ];
 
-    try {
-        $snapToken = \Midtrans\Snap::getSnapToken($transaction);
-    } catch (Exception $e) {
-        // Tangani error jika gagal mendapatkan Snap Token
-        error_log($e->getMessage());
-    }
-}
+//     try {
+//         $snapToken = \Midtrans\Snap::getSnapToken($transaction);
+//     } catch (Exception $e) {
+//         // Tangani error jika gagal mendapatkan Snap Token
+//         error_log($e->getMessage());
+//     }
+// }
 ?>
 
 <!DOCTYPE html>
@@ -279,6 +279,9 @@ if (!empty($items)) {
                             <p>Total</p>
                             <p>Rp <span id="grand-total-amount"><?php echo number_format($total_amount, 0, ',', '.'); ?></span></p>
                         </div>
+                        <button id="pay-button" class="w-full bg-red-600 text-white font-bold py-3 rounded-lg mt-6 hover:bg-red-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed" disabled>
+                            Pilih Pengiriman Dulu
+                        </button>
                     </div>
                 </div>
         <?php endif; ?>
@@ -406,35 +409,72 @@ if (!empty($items)) {
             });
         });
 
-        // Event listener untuk tombol bayar
         const payButton = document.getElementById('pay-button');
         if (payButton) {
             payButton.addEventListener('click', function () {
-                const snapToken = '<?php echo $snapToken; ?>';
-                if (snapToken) {
-                    snap.pay(snapToken, {
-                        onSuccess: function(result){
-                            /* Anda bisa menambahkan logika di sini, misalnya redirect ke halaman status pesanan */
-                            alert("Pembayaran berhasil!"); console.log(result);
-                            window.location.href = 'status_pesanan.php?order_id=' + result.order_id;
-                        },
-                        onPending: function(result){
-                            /* Logika untuk status pending */
-                            alert("Menunggu pembayaran Anda!"); console.log(result);
-                            window.location.href = 'status_pesanan.php?order_id=' + result.order_id;
-                        },
-                        onError: function(result){
-                            /* Logika jika terjadi error */
-                            alert("Pembayaran gagal!"); console.log(result);
-                        },
-                        onClose: function(){
-                            /* Logika jika pop-up ditutup sebelum selesai */
-                            console.log('Anda menutup popup tanpa menyelesaikan pembayaran');
-                        }
-                    });
-                } else {
-                    alert('Gagal memproses pembayaran. Silakan coba lagi.');
+                // Cek apakah ongkir sudah dipilih
+                const selectedShipping = document.querySelector('input[name="shipping_option"]:checked');
+                if (!selectedShipping) {
+                    alert('Silakan pilih metode pengiriman terlebih dahulu.');
+                    return;
                 }
+
+                // Tampilkan status loading
+                this.disabled = true;
+                this.textContent = 'Memproses...';
+
+                // Ambil nilai subtotal dan ongkir
+                const subtotal = parseFloat(document.getElementById('subtotal-amount').textContent.replace(/\./g, ''));
+                const ongkir = parseFloat(selectedShipping.value);
+
+                // Siapkan data untuk dikirim ke server
+                const formData = new FormData();
+                formData.append('subtotal', subtotal);
+                formData.append('ongkir', ongkir);
+
+                // Panggil server untuk mendapatkan Snap Token
+                fetch('get_midtrans_token.php', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.snapToken) {
+                        // Jika token berhasil didapat, buka popup pembayaran Midtrans
+                        snap.pay(data.snapToken, {
+                            onSuccess: function(result){
+                                alert("Pembayaran berhasil!");
+                                window.location.href = 'status_pesanan.php?order_id=' + result.order_id;
+                            },
+                            onPending: function(result){
+                                alert("Menunggu pembayaran Anda!");
+                                window.location.href = 'status_pesanan.php?order_id=' + result.order_id;
+                            },
+                            onError: function(result){
+                                alert("Pembayaran gagal!");
+                                // Kembalikan tombol ke keadaan semula
+                                payButton.disabled = false;
+                                payButton.textContent = 'Lanjut ke Pembayaran';
+                            },
+                            onClose: function(){
+                                console.log('Anda menutup popup tanpa menyelesaikan pembayaran');
+                                // Kembalikan tombol ke keadaan semula
+                                payButton.disabled = false;
+                                payButton.textContent = 'Lanjut ke Pembayaran';
+                            }
+                        });
+                    } else {
+                        alert(data.error || 'Terjadi kesalahan.');
+                        payButton.disabled = false;
+                        payButton.textContent = 'Lanjut ke Pembayaran';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Tidak dapat terhubung ke server pembayaran.');
+                    payButton.disabled = false;
+                    payButton.textContent = 'Lanjut ke Pembayaran';
+                });
             });
         }
 
@@ -564,6 +604,16 @@ if (!empty($items)) {
                     document.querySelectorAll('input[name="shipping_option"]').forEach(radio => {
                         radio.addEventListener('change', function() {
                             updateTotal(parseInt(this.value));
+                        });
+                    });
+                    document.querySelectorAll('input[name="shipping_option"]').forEach(radio => {
+                        radio.addEventListener('change', function() {
+                            updateTotal(parseInt(this.value));
+
+                            // AKTIFKAN TOMBOL BAYAR (TAMBAHKAN INI)
+                            const payButton = document.getElementById('pay-button');
+                            payButton.disabled = false;
+                            payButton.textContent = 'Lanjut ke Pembayaran';
                         });
                     });
 
