@@ -4,7 +4,9 @@
 header('Content-Type: application/json');
 
 // Rahasiakan API Key Anda
-$apiKey = 'PHsqgmBg2c34bd2cf137e7f40uzdrVFQ';
+// $apiKey = 'PHsqgmBg2c34bd2cf137e7f40uzdrVFQ'; #punya asbel
+$apiKey ='e85bd58f9f3be9e66e62c2c8973e6fcc'; #punya gw
+
 
 // Asal Pengiriman (atur ID kota asal toko Anda)
 // Anda bisa mencari ID kota di dokumentasi RajaOngkir

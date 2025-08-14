@@ -185,9 +185,10 @@ while ($row = $result_history->fetch_assoc()) {
                                         <span class="text-xs font-semibold px-2 py-1 rounded-full 
                                             <?php 
                                                 switch(strtolower($order['status'])) {
-                                                    case 'selesai': echo 'bg-green-100 text-green-800'; break;
-                                                    case 'pending': echo 'bg-yellow-100 text-yellow-800'; break;
-                                                    case 'batal': echo 'bg-red-100 text-red-800'; break;
+                                                    case 'settlement': echo 'bg-green-100 text-green-800'; break;
+                                                    case 'sedang dikirim': echo 'bg-sky-100 text-sky-800'; break;
+                                                    case 'diproses': echo 'bg-yellow-100 text-yellow-800'; break;
+                                                    case 'dibatalkan': echo 'bg-red-100 text-red-800'; break;
                                                     default: echo 'bg-gray-100 text-gray-800';
                                                 }
                                             ?>">
@@ -214,14 +215,53 @@ while ($row = $result_history->fetch_assoc()) {
     </main>
 
     <!-- Modal Detail Pesanan -->
-    <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-lg m-4">
-            <div class="flex justify-between items-center border-b px-6 py-4">
-                <h5 class="text-lg font-bold">Detail Pesanan</h5>
-                <button type="button" class="text-gray-400 hover:text-gray-600 text-2xl" onclick="document.getElementById('detailModal').classList.add('hidden')">&times;</button>
+    <div id="detailModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-50 rounded-xl shadow-2xl w-full max-w-2xl m-4 transform transition-all duration-300 ease-out">
+            
+            <div class="flex justify-between items-start border-b border-gray-200 px-6 py-4">
+                <div>
+                    <h5 class="text-xl font-bold text-gray-800">Detail Pesanan</h5>
+                    <p class="text-sm text-gray-500">ID: <span id="modal-order-id">...</span></p>
+                </div>
+                <button type="button" class="text-gray-400 hover:text-red-600 text-3xl font-light" onclick="document.getElementById('detailModal').classList.add('hidden')">&times;</button>
             </div>
-            <div id="modalBody" class="p-6 max-h-96 overflow-y-auto">
-                <!-- Konten detail akan dimuat di sini via AJAX -->
+            
+            <div id="modalBody" class="p-6 max-h-[70vh] overflow-y-auto">
+                <div id="modal-content-container">
+                    <div class="grid grid-cols-2 gap-4 mb-6 text-sm">
+                        <div class="bg-white p-4 rounded-lg border">
+                            <p class="font-semibold text-gray-600 mb-1">Pelanggan:</p>
+                            <p class="font-bold text-gray-800" id="modal-customer-name">...</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg border">
+                            <p class="font-semibold text-gray-600 mb-1">Status Pembayaran:</p>
+                            <span id="modal-status-badge" class="px-3 py-1 text-xs font-bold text-white rounded-full">...</span>
+                        </div>
+                    </div>
+
+                    <h6 class="font-bold text-gray-700 mb-2">Rincian Produk</h6>
+                    <div id="modal-items-container" class="space-y-3 border-t border-b border-gray-200 py-4">
+                        </div>
+
+                    <div class="mt-6 space-y-2 text-right">
+                        <div class="flex justify-end items-center">
+                            <p class="text-gray-600 mr-4">Subtotal Produk:</p>
+                            <p class="font-semibold text-gray-800 w-32">Rp <span id="modal-subtotal">0</span></p>
+                        </div>
+                        <div class="flex justify-end items-center">
+                            <p class="text-gray-600 mr-4">Biaya Pengiriman:</p>
+                            <p class="font-semibold text-gray-800 w-32">Rp <span id="modal-shipping">0</span></p>
+                        </div>
+                        <div class="flex justify-end items-center mt-2 pt-2 border-t-2 border-dashed">
+                            <p class="font-bold text-lg text-red-700 mr-4">Total Pesanan:</p>
+                            <p class="font-bold text-lg text-red-700 w-32">Rp <span id="modal-grand-total">0</span></p>
+                        </div>
+                    </div>
+                </div>
+                <div id="modal-loading-state" class="text-center py-16 hidden">
+                    <i class="fas fa-spinner fa-spin text-4xl text-red-600"></i>
+                    <p class="mt-4 text-gray-600">Memuat detail...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -239,19 +279,87 @@ while ($row = $result_history->fetch_assoc()) {
             });
 
             // AJAX untuk detail riwayat pesanan
+            // Anda bisa menggunakan jQuery atau Vanilla JS. Ini versi jQuery yang disempurnakan.
             $('.detail-btn').on('click', function() {
                 var id_transaksi = $(this).data('id');
+
+                // Referensi elemen-elemen modal
+                var modal = $('#detailModal');
+                var modalContent = $('#modal-content-container');
+                var modalLoading = $('#modal-loading-state');
+
+                // 1. Tampilkan modal dan state loading
+                modal.removeClass('hidden');
+                modalContent.hide();
+                modalLoading.show();
+
+                // 2. Lakukan AJAX call untuk mendapatkan data JSON
                 $.ajax({
                     type: "POST",
-                    url: "get_history.php", // Pastikan file ini ada dan aman
+                    url: "get_history.php",
                     data: { id_transaksi: id_transaksi },
+                    dataType: 'json', // Penting: beri tahu jQuery kita mengharapkan JSON
                     success: function(response) {
-                        $('#modalBody').html(response);
-                        $('#detailModal').removeClass('hidden');
+                        if (response.error) {
+                            alert(response.error);
+                            modal.addClass('hidden'); // Sembunyikan modal jika ada error
+                            return;
+                        }
+
+                        // 3. Isi data ke placeholder di modal
+                        var transaksi = response.transaksi;
+                        var items = response.items;
+
+                        $('#modal-order-id').text(transaksi.id);
+                        $('#modal-customer-name').text(transaksi.nama_pelanggan);
+                        
+                        // Atur badge status
+                        var statusBadge = $('#modal-status-badge');
+                        statusBadge.text(transaksi.status);
+                        if (transaksi.status === 'settlement' || transaksi.status === 'capture') {
+                            statusBadge.removeClass('bg-yellow-500 bg-red-500').addClass('bg-green-500');
+                        } else if (transaksi.status === 'pending') {
+                            statusBadge.removeClass('bg-green-500 bg-red-500').addClass('bg-yellow-500');
+                        } else {
+                            statusBadge.removeClass('bg-green-500 bg-yellow-500').addClass('bg-red-500');
+                        }
+
+                        // 4. Bangun daftar item produk
+                        var itemsContainer = $('#modal-items-container');
+                        itemsContainer.empty(); // Kosongkan daftar item sebelumnya
+                        var subtotalProduk = 0;
+
+                        items.forEach(function(item) {
+                            subtotalProduk += parseFloat(item.total);
+                            var itemHtml = `
+                                <div class="flex items-center text-sm">                                   
+                                    <div class="flex-grow">
+                                        <p class="font-bold text-gray-800">${item.nama}</p>
+                                        <p class="text-gray-500">${item.jumlah} x Rp ${new Intl.NumberFormat('id-ID').format(item.harga)}</p>
+                                    </div>
+                                    <p class="font-semibold text-gray-700 w-24 text-right">Rp ${new Intl.NumberFormat('id-ID').format(item.total)}</p>
+                                </div>
+                            `;
+                            itemsContainer.append(itemHtml);
+                        });
+
+                        // 5. Hitung dan tampilkan ringkasan biaya
+                        var grandTotal = parseFloat(transaksi.total);
+                        var shippingCost = grandTotal - subtotalProduk;
+
+                        $('#modal-subtotal').text(new Intl.NumberFormat('id-ID').format(subtotalProduk));
+                        $('#modal-shipping').text(new Intl.NumberFormat('id-ID').format(shippingCost));
+                        $('#modal-grand-total').text(new Intl.NumberFormat('id-ID').format(grandTotal));
+                        
+                        // 6. Tampilkan konten dan sembunyikan loading
+                        modalLoading.hide();
+                        modalContent.show();
+
                     },
                     error: function() {
-                        $('#modalBody').html('<p class="text-red-500">Gagal memuat detail pesanan.</p>');
-                        $('#detailModal').removeClass('hidden');
+                        // Tampilkan error di dalam modal
+                        modalLoading.hide();
+                        $('#modalBody').html('<div class="p-8 text-center"><p class="text-red-500 font-bold">Terjadi Kesalahan</p><p>Gagal memuat detail pesanan. Silakan coba lagi.</p></div>');
                     }
                 });
             });

@@ -443,8 +443,38 @@ foreach ($items as $item) {
                         // Jika token berhasil didapat, buka popup pembayaran Midtrans
                         snap.pay(data.snapToken, {
                             onSuccess: function(result){
-                                alert("Pembayaran berhasil!");
-                                window.location.href = 'status_pesanan.php?order_id=' + result.order_id;
+                                // alert("Pembayaran berhasil!");
+                                // window.location.href = 'status_pesanan.php?order_id=' + result.order_id;
+
+                                /* Logika baru: kirim hasil ke server untuk diproses */
+                                console.log('Pembayaran Berhasil:', result);
+                                
+                                // Tampilkan status loading pada tombol
+                                payButton.disabled = true;
+                                payButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses Pesanan...';
+
+                                fetch('proses_pesanan.php', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ midtrans_result: result })
+                                    })
+                                    .then(response => response.json())
+                                    .then(dataServer => {
+                                        if (dataServer.success) {
+                                            // Jika server berhasil memproses, baru redirect
+                                            alert("Pesanan berhasil dibuat!");
+                                            window.location.href = 'status_pesanan.php?order_id=' + dataServer.order_id;
+                                        } else {
+                                            // Jika server gagal, beri tahu pengguna
+                                            alert('Pembayaran berhasil, namun gagal mencatat pesanan. Hubungi admin. Error: ' + dataServer.message);
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error('Error:', error);
+                                        alert('Terjadi kesalahan koneksi saat mencatat pesanan. Hubungi admin.');
+                                    });
                             },
                             onPending: function(result){
                                 alert("Menunggu pembayaran Anda!");
