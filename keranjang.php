@@ -66,7 +66,8 @@ foreach ($items as $item) {
 }
 
 // Konfigurasi Midtrans
-require 'vendor/autoload.php';
+require './vendor/autoload.php';
+
 \Midtrans\Config::$serverKey = 'SB-Mid-server-C1ta5HP9_KFpsSrBQaSJP3zC'; // Ganti dengan Server Key Anda
 \Midtrans\Config::$isProduction = false; // Set true untuk production
 \Midtrans\Config::$isSanitized = true;

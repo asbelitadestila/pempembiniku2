@@ -371,7 +371,7 @@ if (isset($_POST['beli'])) {
                 <div class="produk-item group" data-kategori="<?php echo strtolower(htmlspecialchars($value['nama_kategori'])); ?>">
                     <form action="index.php#produk" method="post" class="bg-white rounded-lg shadow-lg h-full flex flex-col overflow-hidden transition-all-smooth transform hover:-translate-y-2 hover:shadow-2xl">
                         <div class="relative">
-                            <img src="assets/foto_produk/<?php echo htmlspecialchars($value['foto_produk']); ?>" class="w-full h-56 object-cover" alt="<?php echo htmlspecialchars($value['nama_produk']); ?>">
+                            <img src="assets/foto/<?php echo htmlspecialchars($value['foto_produk']); ?>" class="w-full h-56 object-cover" alt="<?php echo htmlspecialchars($value['nama_produk']); ?>">
                             <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-all-smooth"></div>
                         </div>
                         <div class="p-5 flex flex-col flex-grow">
@@ -388,7 +388,7 @@ if (isset($_POST['beli'])) {
                                 
                                 <div class="flex items-center justify-center mb-4">
                                     <button type="button" class="quantity-btn decrease-btn">-</button>
-                                    <input type="number" name="jumlah" value="1" min="1" max="<?php echo $value['stok_produk']; ?>" class="quantity-input">
+                                    <input class="" type="number" name="jumlah" value="1" min="1" max="<?php echo $value['stok_produk']; ?>" class="quantity-input">
                                     <button type="button" class="quantity-btn increase-btn">+</button>
                                 </div>
                                 <button type="submit" name="beli" class="w-full bg-red-600 text-white py-2.5 px-4 rounded-lg font-semibold hover:bg-red-700 transition-all-smooth">

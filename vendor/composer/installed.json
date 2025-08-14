@@ -2,33 +2,35 @@
     "packages": [
         {
             "name": "midtrans/midtrans-php",
-            "version": "2.5.2",
-            "version_normalized": "2.5.2.0",
+            "version": "2.6.2",
+            "version_normalized": "2.6.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Midtrans/midtrans-php.git",
-                "reference": "a1ad0c824449ca8c68c4cf11b3417ad518311d2b"
+                "reference": "8ed7fc58ff1ababe675da17acf8233f4028eb3be"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Midtrans/midtrans-php/zipball/a1ad0c824449ca8c68c4cf11b3417ad518311d2b",
-                "reference": "a1ad0c824449ca8c68c4cf11b3417ad518311d2b",
+                "url": "https://api.github.com/repos/Midtrans/midtrans-php/zipball/8ed7fc58ff1ababe675da17acf8233f4028eb3be",
+                "reference": "8ed7fc58ff1ababe675da17acf8233f4028eb3be",
                 "shasum": ""
             },
             "require": {
                 "ext-curl": "*",
                 "ext-json": "*",
+                "ext-openssl": "*",
                 "php": ">=5.4"
             },
             "require-dev": {
                 "phpunit/phpunit": "5.7.*",
                 "psy/psysh": "0.4.*"
             },
-            "time": "2021-08-23T08:52:05+00:00",
+            "time": "2025-03-18T06:30:17+00:00",
             "type": "library",
             "installation-source": "source",
             "autoload": {
                 "psr-4": {
+                    "SnapBi\\": "SnapBi/",
                     "Midtrans\\": "Midtrans/"
                 }
             },
@@ -48,13 +50,17 @@
                 {
                     "name": "Ismail Faruqi",
                     "email": "ismail.faruqi@veritrans.co.id"
+                },
+                {
+                    "name": "Muhammad Fauzi Masykur",
+                    "email": "muhammad.masykur@gojek.com"
                 }
             ],
             "description": "PHP Wrapper for Midtrans Payment API.",
             "homepage": "https://midtrans.com",
             "support": {
                 "issues": "https://github.com/Midtrans/midtrans-php/issues",
-                "source": "https://github.com/Midtrans/midtrans-php/tree/2.5.2"
+                "source": "https://github.com/Midtrans/midtrans-php/tree/v2.6.2"
             },
             "install-path": "../midtrans/midtrans-php"
         }
