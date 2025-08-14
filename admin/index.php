@@ -60,7 +60,7 @@ if ($halaman == 'logout') {
                     <i class="fas fa-box-open w-6 mr-3"></i>
                     <span>Produk</span>
                 </a>
-                <a href="index.php?halaman=transaksi" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'transaksi' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
+                <a href="index.php?halaman=transaksi" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'transaksi' || $halaman == 'detail_pembelian' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
                     <i class="fas fa-receipt w-6 mr-3"></i>
                     <span>Transaksi</span>
                 </a>
@@ -91,9 +91,11 @@ if ($halaman == 'logout') {
                 case 'transaksi':
                     include 'transaksi.php';
                     break;
-                case 'pelanggan':
-                    // Menggunakan kode dari halaman pelanggan yang sudah dimodernisasi
+                case 'pelanggan':                    
                     include 'pelanggan.php';
+                    break;
+                case 'detail_pembelian':                    
+                    include 'Detail/detail_pembelian.php';
                     break;
                 case 'dashboard':
                 default:

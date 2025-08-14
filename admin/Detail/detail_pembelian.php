@@ -41,7 +41,7 @@ if ($id_transaksi) {
                 
                 <!-- Alamat -->
                 <label class="w-full md:w-1/3 py-2 font-medium">Alamat :</label>
-                <label class="w-full md:w-2/3 py-2"><?php echo htmlspecialchars($detail['alamat']); ?></label>
+                <label class="w-full md:w-2/3 py-2 uppercase"><?php echo $detail['provinsi']; ?>, <?php echo $detail['kota']; ?>, <?php echo $detail['kecamatan']; ?>, <?php echo $detail['detail_alamat']; ?></label>
                 
                 <!-- Telepon -->
                 <label class="w-full md:w-1/3 py-2 font-medium">Telepon :</label>
@@ -60,6 +60,11 @@ if ($id_transaksi) {
                 <label class="w-full md:w-1/3 py-2 font-medium">Tanggal :</label>
                 <label class="w-full md:w-2/3 py-2">
                     <?php echo date("d F Y", strtotime($detail['tanggal'])); ?> 
+                </label>
+                <!-- Ongkir --> 
+                <label class="w-full md:w-1/3 py-2 font-medium">Ongkos Kirim :</label>
+                <label class="w-full md:w-2/3 py-2">
+                    Rp. <?php echo number_format($detail['ongkir']); ?> - <span class="uppercase"><?php echo $detail['kurir']; ?> </span>
                 </label>
                 <!-- Total --> 
                 <label class="w-full md:w-1/3 py-2 font-medium">Total :</label>

@@ -46,7 +46,7 @@ while($pecah = $ambil->fetch_assoc())
                                 <i class="fas fa-truck-pickup"></i> Proses
                             </button>
                         <?php endif; ?>
-                        <a href="index.php?halaman=detail_transaksi&id=<?php 
+                        <a href="index.php?halaman=detail_pembelian&id=<?php 
                         echo $value['id']; ?>" class="inline-block px-2 py-1 text-sm text-white bg-blue-500 rounded hover:bg-blue-600">
                             <i class="fas fa-info"></i>
                         </a>
