@@ -52,7 +52,7 @@ if ($halaman == 'logout') {
                     <i class="fas fa-tachometer-alt w-6 mr-3"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="index.php?halaman=kategori" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'kategori' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
+                <a href="index.php?halaman=kategori" class="flex items-center px-4 py-2.5 rounded-lg transition-colors <?php echo $halaman == 'kategori' || $halaman == 'detail_kategori' ? 'bg-red-900' : 'hover:bg-red-600'; ?>">
                     <i class="fas fa-tags w-6 mr-3"></i>
                     <span>Kategori</span>
                 </a>
@@ -96,6 +96,42 @@ if ($halaman == 'logout') {
                     break;
                 case 'detail_pembelian':                    
                     include 'Detail/detail_pembelian.php';
+                    break;
+                case 'detail_pendapatan':                    
+                    include 'Detail/detail_pendapatan.php';
+                    break;
+                case 'detail_produk':                    
+                    include 'Detail/detail_produk.php';
+                    break;
+                case 'edit_kategori':                    
+                    include 'Edit/edit_kategori.php';
+                    break;
+                case 'edit_produk':                    
+                    include 'Edit/edit_produk.php';
+                    break;
+                case 'edit_transaksi':                    
+                    include 'Edit/edit_transaksi.php';
+                    break;
+                case 'hapus_foto':                    
+                    include 'Hapus/hapus_foto.php';
+                    break;
+                case 'hapus_kategori':                    
+                    include 'Hapus/hapus_kategori.php';
+                    break;
+                case 'hapus_pendapatan':                    
+                    include 'Hapus/hapus_pendapatan.php';
+                    break;
+                case 'hapus_produk':                    
+                    include 'Hapus/hapus_produk.php';
+                    break;
+                case 'hapus_user':                    
+                    include 'Hapus/hapus_user.php';
+                    break;
+                case 'tambah_kategori':                    
+                    include 'Tambah/tambah_kategori.php';
+                    break;
+                case 'tambah_produk':                    
+                    include 'Tambah/tambah_produk.php';
                     break;
                 case 'dashboard':
                 default:

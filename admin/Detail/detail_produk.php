@@ -87,7 +87,7 @@ while($tiap = $ambil->fetch_assoc())
     <?php foreach ($produk_foto as $key => $value): ?>
     <div class="w-full md:w-1/3 px-2 mb-4">
         <div class="border rounded overflow-hidden" style="width: 21rem;">
-            <img src="../assets/foto_produk/<?php echo $value['nama_produk_foto']; ?>"
+            <img src="../assets/foto/<?php echo $value['nama_produk_foto']; ?>"
             class="w-full">
             <div class="p-3 text-center">
                 <a href="index.php?halaman=hapus_foto&idfoto=<?php echo $value['id_produk_foto'];
@@ -133,12 +133,12 @@ if(isset($_POST['simpan']))
 
     $tgl_foto = date('YmdHis') . $namafoto;
 
-    move_uploaded_file($lokasifoto, "../assets/foto_produk/" . $tgl_foto);
+    move_uploaded_file($lokasifoto, "../assets/foto/" . $tgl_foto);
 
     $koneksi->query("INSERT INTO produk_foto (id_produk,nama_produk_foto)
     VALUES ('$id_produk','$tgl_foto')");
 
     echo "<script>alert('foto produk berhasil disimpan');</script>";
-    echo "<script>location='index.php?halaman=detail+produk&id=$id_produk';</script>";
+    echo "<script>location='index.php?halaman=detail_produk&id=$id_produk';</script>";
 }
 ?>
