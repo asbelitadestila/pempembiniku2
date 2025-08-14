@@ -52,7 +52,7 @@ try {
     $stmt_transaksi = mysqli_prepare($koneksi, $query_transaksi);
     
     // 2. Perbarui bind_param sesuai jumlah kolom baru
-    mysqli_stmt_bind_param($stmt_transaksi, "sisssdsiiissi", 
+    mysqli_stmt_bind_param($stmt_transaksi, "sisssdssssssi", 
         $id_transaksi_baru, $userId, $namaPelanggan, $midtransCode, $tanggal, $total, $status, 
         $provinsi, $kota, $kecamatan, $detailAlamat, $kurir, $ongkir
     );

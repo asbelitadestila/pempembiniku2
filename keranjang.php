@@ -121,6 +121,7 @@ foreach ($items as $item) {
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet" type="text/css">
+    
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -465,9 +466,9 @@ foreach ($items as $item) {
 
                                 // 2. Ambil TEXT dari opsi yang dipilih dan VALUE dari input lainnya
                                 const dataAlamat = {
-                                    provinsi: elProvinsi.options[elProvinsi.selectedIndex].value,
-                                    kota: elKota.options[elKota.selectedIndex].value,
-                                    kecamatan: elKecamatan.options[elKecamatan.selectedIndex].value,
+                                    provinsi: elProvinsi.options[elProvinsi.selectedIndex].text,
+                                    kota: elKota.options[elKota.selectedIndex].text,
+                                    kecamatan: elKecamatan.options[elKecamatan.selectedIndex].text,
                                     detail: elAlamat.value,
                                     kurir: elKurir.value,
                                     ongkir: elOngkir ? elOngkir.value : 0
